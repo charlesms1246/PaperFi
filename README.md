@@ -1,6 +1,6 @@
 # PaperFi - Crypto Perpetuals Trading Simulator
 
-> 🌐 **Deployed on IPFS via [PinMe](https://pinme.eth.limo)** - Censorship-resistant, permanent frontend accessible at `https://5qgnhqze.pinit.eth.limo/`
+> 🌐 **Deployed on IPFS via [PinMe](https://pinme.eth.limo)** - Censorship-resistant, permanent frontend accessible at https://5qgnhqze.pinit.eth.limo
 
 PaperFi is a sophisticated crypto trading simulator that allows users to practice perpetual futures trading with real market data in a completely risk-free environment. Built with modern web technologies and deployed using decentralized infrastructure.
 
