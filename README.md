@@ -1,6 +1,8 @@
 # PaperFi - Crypto Perpetuals Trading Simulator
 
-PaperFi is a sophisticated crypto trading simulator that allows users to practice perpetual futures trading with real market data in a completely risk-free environment. Built with modern web technologies and integrated with Pyth Network for real-time price feeds, PaperFi provides an authentic trading experience without financial risk.
+> 🌐 **Deployed on IPFS via [PinMe](https://pinme.eth.limo)** - Censorship-resistant, permanent frontend accessible at `https://5qgnhqze.pinit.eth.limo/`
+
+PaperFi is a sophisticated crypto trading simulator that allows users to practice perpetual futures trading with real market data in a completely risk-free environment. Built with modern web technologies and deployed using decentralized infrastructure.
 
 ## 🚀 Features
 
@@ -29,6 +31,7 @@ PaperFi is a sophisticated crypto trading simulator that allows users to practic
 - **Responsive Design** - Optimized for desktop, tablet, and mobile devices
 - **Dark Mode** - Professional trading terminal aesthetic
 - **Performance Optimized** - Efficient caching and data management
+- **Decentralized Deployment** - Forever frontend hosted on IPFS via PinMe
 
 ## 🏗️ Architecture
 
@@ -47,6 +50,8 @@ PaperFi is a sophisticated crypto trading simulator that allows users to practic
 - **Cloudflare Workers** - Serverless backend for API proxying and data processing
 - **Supabase** - Database, authentication, and real-time subscriptions
 - **Cloudflare R2** - Object storage for static assets
+- **IPFS** - Decentralized frontend hosting via PinMe
+- **ENS** - Human-readable addresses through .eth.limo gateway
 
 ### Web3 & Blockchain
 
@@ -54,6 +59,69 @@ PaperFi is a sophisticated crypto trading simulator that allows users to practic
 - **Viem** - Low-level Ethereum library
 - **ConnectKit** - Wallet connection UI and management
 - **Ethers.js** - Ethereum wallet and contract interaction
+
+## 🌐 Decentralized Deployment
+
+### Why PinMe?
+
+PaperFi is deployed using **[PinMe](https://pinme.eth.limo)** - a one-command tool for creating permanent, censorship-resistant frontends. This ensures:
+
+- ✅ **Permanent Availability** - Frontend exists as long as IPFS and Ethereum exist
+- ✅ **Censorship Resistance** - No centralized entity can take down the application
+- ✅ **On-chain Verification** - Content integrity verifiable via IPFS content hash
+- ✅ **Zero Hosting Costs** - No servers, no subscriptions, forever free
+- ✅ **Global CDN** - Distributed across IPFS network for worldwide access
+
+### Architecture Overview
+
+```
+┌─────────────────┐
+│  IPFS/PinMe     │  ← Frontend (React App)
+│  Forever        │     Deployed: pinme upload ./dist
+│  Frontend       │     Access: https://<cid>.pinit.eth.limo/
+└────────┬────────┘
+         │
+         │ API Calls
+         │
+         ▼
+┌─────────────────┐
+│  Cloudflare     │  ← Backend (Worker)
+│  Workers        │     • TradingView proxy
+│  (Edge API)     │     • Pyth datafeed proxy
+└────────┬────────┘     • R2 avatar storage
+         │              • PYUSD distribution
+         │
+    ┌────┴─────┬──────────┬─────────────┐
+    │          │          │             │
+    ▼          ▼          ▼             ▼
+ ┌─────┐  ┌──────┐  ┌────────┐  ┌──────────┐
+ │Pyth │  │ TView│  │Supabase│  │ Ethereum │
+ └─────┘  └──────┘  └────────┘  └──────────┘
+```
+
+### Deployment Information
+
+**Frontend (Decentralized):**
+- **Platform**: IPFS via PinMe
+- **Gateway**: eth.limo
+- **Access**: Permanent IPFS hash + ENS subdomain
+- **Deploy Command**: `pinme upload ./dist`
+
+**Backend (Edge Computing):**
+- **Platform**: Cloudflare Workers
+- **Purpose**: API proxy, data processing, secure operations
+- **Deploy Command**: `npx wrangler deploy`
+
+### Current Deployment
+
+```bash
+# Frontend on IPFS
+IPFS CID: <your-deployment-cid>
+Gateway URL: https://<cid>.pinit.eth.limo/
+
+# Backend on Cloudflare
+Worker URL: https://paper.charlesms1246.workers.dev
+```
 
 ## 📊 PYTH Network Integration
 
@@ -172,14 +240,20 @@ PaperFi supports all assets available through Pyth Network, including:
 
 - Node.js 18+ or Bun
 - Git
+- Cloudflare account (for backend deployment)
+- PinMe CLI (for IPFS deployment)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/paperfi/PaperFi.git
+git clone https://github.com/charlesms1246/PaperFi.git
 cd PaperFi
+
+# Install dependencies
 bun install
+
+# Start development server
 bun run dev
 ```
 
@@ -191,6 +265,14 @@ Create a `.env` file based on `.env.example`:
 
 ```bash
 cp .env.example .env
+```
+
+Required environment variables:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_key
+VITE_ALCHEMY_ID=your_alchemy_api_key
+VITE_WALLETCONNECT_PROJECT_ID=your_project_id
 ```
 
 ## 📁 Project Structure
@@ -256,16 +338,75 @@ paper/
 
 ## 🚀 Deployment
 
-### Cloudflare Workers
+### Option 1: Decentralized Deployment (Recommended)
 
-The application is designed to run on Cloudflare's edge network:
+Deploy the frontend to IPFS using **PinMe** for a permanent, censorship-resistant application:
+
+```bash
+# Install PinMe
+npm install -g pinme
+
+# Configure for IPFS deployment (ensure base: "./" in vite.config.ts)
+
+# Build the application
+bun run build
+
+# Deploy to IPFS
+pinme upload ./dist
+
+# You'll receive:
+# - IPFS CID: bafybei...
+# - Gateway URL: https://<cid>.pinit.eth.limo/
+# - ENS subdomain: https://<subdomain>.pinit.eth.limo/
+```
+
+**Important**: The Cloudflare Worker backend must be deployed separately:
+
+```bash
+# Deploy backend to Cloudflare Workers
+npx wrangler login
+npx wrangler deploy
+```
+
+### Option 2: Full Cloudflare Deployment
+
+Deploy both frontend and backend together on Cloudflare's edge network:
 
 ```bash
 # Configure Cloudflare Workers
 npx wrangler login
 
-# Deploy to production
+# Add account_id to wrangler.toml
+# account_id = "your_account_id"
+
+# Create R2 bucket for avatars
+npx wrangler r2 bucket create paper
+
+# Set environment secrets
+npx wrangler secret put VAULT_PRIVATE_KEY
+
+# Deploy everything
 bun run deploy
+```
+
+### Deployment Checklist
+
+- [ ] Environment variables configured
+- [ ] Cloudflare account set up (for backend)
+- [ ] R2 bucket created (`paper`)
+- [ ] VAULT_PRIVATE_KEY secret set
+- [ ] PinMe CLI installed (for IPFS deployment)
+- [ ] vite.config.ts has `base: "./"` for IPFS
+
+### Vite Configuration for IPFS
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  base: "./",  // Critical for IPFS deployment
+  plugins: [react(), cloudflare()],
+  // ... rest of config
+});
 ```
 
 ## 🔐 Security & Privacy
@@ -274,6 +415,16 @@ bun run deploy
 - **Wallet Security**: Non-custodial wallet connections
 - **Data Encryption**: All API communications over HTTPS
 - **Privacy First**: Minimal data collection and storage
+- **Decentralized Storage**: Frontend hosted on IPFS for enhanced censorship resistance
+- **Secure Backend**: Cloudflare Workers with environment-based secrets
+
+## 📝 Deployment History
+
+Track your IPFS deployments:
+
+| Version | Date | IPFS CID | Gateway URL |
+|---------|------|----------|-------------|
+| v0.0.3 | 2025-11-21 | `<your-cid>` | `https://<cid>.pinit.eth.limo/` |
 
 ## 🙏 Acknowledgments
 
@@ -282,3 +433,12 @@ bun run deploy
 - **Supabase** for backend infrastructure
 - **Cloudflare** for edge computing and deployment
 - **Shadcn/ui** for beautiful UI components
+- **PinMe** for enabling censorship-resistant, permanent frontend deployment
+- **IPFS** for decentralized content storage
+- **ENS** for human-readable blockchain addresses
+
+## 📄 License
+
+MIT License - See the [LICENSE](LICENSE) file for details
+
+---
